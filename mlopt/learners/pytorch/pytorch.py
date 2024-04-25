@@ -48,7 +48,7 @@ class PytorchObjective(object):
             'n_classes': self.n_classes,
             'n_layers': trial.suggest_int('n_layers',
                                           *self.bounds['n_layers']),
-            'dropout': trial.suggest_uniform('dropout',
+            'dropout': trial.suggest_float('dropout',
                                              *self.bounds['dropout']),
             'batch_size': trial.suggest_int('batch_size',
                                             *self.bounds['batch_size']),
@@ -201,7 +201,6 @@ class PytorchNeuralNet(Learner):
         stg.logger.info("Train with best parameters")
 
         self.trainer = Trainer(
-            checkpoint_callback=False,
             accelerator='dp',
             logger=False,  # ??
             max_epochs=self.best_params['max_epochs'],
