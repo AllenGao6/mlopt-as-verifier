@@ -65,7 +65,6 @@ class PytorchObjective(object):
         # Construct trainer object and train
         trainer = Trainer(
             logger=False,
-            checkpoint_callback=False,
             accelerator='dp',
             max_epochs=parameters['max_epochs'],
             gpus=-1 if self.use_gpu else None,
