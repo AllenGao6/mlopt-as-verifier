@@ -1,10 +1,9 @@
 import torch
+from pytorch_lightning.core.module import LightningModule
+from torch.utils.data import DataLoader, TensorDataset
+from torch.optim import Adam
 import torch.nn as nn
 import torch.nn.functional as F
-from pytorch_lightning.core.module import LightningModule
-from torch.utils.data import TensorDataset, DataLoader
-from torch.optim import Adam
-
 
 class LightningNet(LightningModule):
     def __init__(self, options, data=None):
@@ -18,7 +17,6 @@ class LightningNet(LightningModule):
         input_dim = options['n_input']
         n_classes = options['n_classes']
 
-        # Add one linear and one dropout layer per layer
         for i in range(n_layers):
             output_dim = options['n_units_l{}'.format(i)]
             self.layers.append(nn.Linear(input_dim, output_dim))
@@ -37,18 +35,12 @@ class LightningNet(LightningModule):
     def train_dataloader(self):
         X = torch.tensor(self.data['X_train'], dtype=torch.float)
         y = torch.tensor(self.data['y_train'], dtype=torch.long)
-
-        return DataLoader(TensorDataset(X, y),
-                          batch_size=self.options['batch_size'],
-                          shuffle=False)
+        return DataLoader(TensorDataset(X, y), batch_size=self.options['batch_size'], shuffle=False)
 
     def val_dataloader(self):
         X = torch.tensor(self.data['X_valid'], dtype=torch.float)
         y = torch.tensor(self.data['y_valid'], dtype=torch.long)
-
-        return DataLoader(TensorDataset(X, y),
-                          batch_size=self.options['batch_size'],
-                          shuffle=False)
+        return DataLoader(TensorDataset(X, y), batch_size=self.options['batch_size'], shuffle=False)
 
     def training_step(self, batch, batch_idx):
         inputs, labels = batch
@@ -62,10 +54,10 @@ class LightningNet(LightningModule):
         loss = F.nll_loss(outputs, labels)
         return {"val_loss": loss}
 
-    def validation_epoch_end(self, outputs):
-        val_loss_mean = torch.stack([x['val_loss'] for x in outputs]).mean()
-        return {'val_loss': val_loss_mean}
+    def on_validation_epoch_end(self):
+        outputs = self.trainer.callback_metrics.get("val_loss")
+        val_loss_mean = torch.stack([x['val_loss'] for x in outputs]).mean() if outputs else torch.tensor(0)
+        self.log('val_loss', val_loss_mean)
 
     def configure_optimizers(self):
-        return Adam(self.parameters(),
-                    lr=self.options['learning_rate'])
+        return Adam(self.parameters(), lr=self.options['learning_rate'])
