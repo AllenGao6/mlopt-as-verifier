@@ -67,7 +67,7 @@ class PytorchObjective(object):
             logger=False,
             accelerator='gpu' if self.use_gpu else 'cpu',
             max_epochs=parameters['max_epochs'],
-            devices= 1 if self.use_gpu else None,
+            devices= 4,
             callbacks=[metrics_callback,
                        PyTorchLightningPruningCallback(trial,
                                                        monitor="val_loss")],
@@ -203,7 +203,7 @@ class PytorchNeuralNet(Learner):
             logger=False,  # ??
             max_epochs=self.best_params['max_epochs'],
             accelerator='gpu' if self.use_gpu else 'cpu',
-            devices=1 if self.use_gpu else None,
+            devices=4,
         )
         self.model = LightningNet(self.best_params, data)
         self.trainer.fit(self.model)
