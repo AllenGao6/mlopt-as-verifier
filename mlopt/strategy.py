@@ -45,7 +45,7 @@ class Strategy(object):
         # Check only inequalities
         F, g = data[cps.F], data[cps.G]
 
-        tight_constraints = np.array([], dtype=np.bool)
+        tight_constraints = np.array([], dtype=np.bool_)
 
         # Constraint is tight if ||F * x - g|| <= eps (1 + rel_tol)
         if F.size > 0:
