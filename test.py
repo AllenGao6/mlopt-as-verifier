@@ -66,3 +66,31 @@ m.train(theta_train, learner=mlopt.XGBOOST)
 
 results = m.performance(theta_test)
 print("Accuracy: %.2f " % results[0]['accuracy'])
+
+# save training data
+m.save_training_data("knapsack_training_data.pkl", delete_existing=True)
+
+problem = cp.Problem(cp.Minimize(cost), constraints)
+m = mlopt.Optimizer(problem)
+m.load_training_data("knapsack_training_data.pkl")
+m.train(learner=mlopt.XGBOOST)  # Train after loading samples
+
+results = m.performance(theta_test)
+print("Accuracy: %.2f " % results[0]['accuracy'])
+
+# Predict single point
+theta = theta_test.iloc[0]
+result_single_point = m.solve(theta)
+print(result_single_point)
+
+y = m.y_train
+X = m.X_train
+learner = XGBoost(n_input=n_features(X),
+                  n_classes=len(np.unique(y)),
+                  n_best=3)
+# Train learner
+learner.train(pandas2array(X), y)
+
+# Predict
+X_pred = X.iloc[0]
+y_pred = learner.predict(pandas2array(X_pred))  # n_best most likely classes
