@@ -62,7 +62,7 @@ n_test = 100
 theta_train = sample(theta_bar, radius, n=n_train)
 theta_test = sample(theta_bar, radius, n=n_test)
 
-m.train(theta_train, learner=mlopt.XGBOOST)
+m.train(theta_train, learner=mlopt.PYTORCH)
 
 results = m.performance(theta_test)
 print("Accuracy: %.2f " % results[0]['accuracy'])
@@ -73,7 +73,7 @@ m.save_training_data("knapsack_training_data.pkl", delete_existing=True)
 problem = cp.Problem(cp.Minimize(cost), constraints)
 m = mlopt.Optimizer(problem)
 m.load_training_data("knapsack_training_data.pkl")
-m.train(learner=mlopt.XGBOOST)  # Train after loading samples
+m.train(learner=mlopt.PYTORCH)  # Train after loading samples
 
 results = m.performance(theta_test)
 print("Accuracy: %.2f " % results[0]['accuracy'])
