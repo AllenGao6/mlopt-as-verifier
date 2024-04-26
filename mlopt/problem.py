@@ -187,10 +187,14 @@ class Problem(object):
                 self.cvxpy_problem._solution.attr.pop(cps.EXTRA_STATS)
         if self.cvxpy_problem._solver_cache is not None:
             self.cvxpy_problem._solver_cache = {}
-        if hasattr(self.cvxpy_problem._solver_stats, "extra_stats"):
-            del self.cvxpy_problem._solver_stats.extra_stats
+        try:
+            if hasattr(self.cvxpy_problem._solver_stats, "extra_stats"):
+                del self.cvxpy_problem._solver_stats.extra_stats
+            except AttributeError as e:
+                print("Failed to delete extra_stats:", e)
+   
 
-    def check_parameters_in_matrices(self):
+   def check_parameters_in_matrices(self):
         """Check if parameters are in matrices.
 
         Cvxpy works by applying a mapping to the parameter vector such that
