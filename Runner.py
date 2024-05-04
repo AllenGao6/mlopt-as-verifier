@@ -70,8 +70,8 @@ def sample(theta_bar, radius, n=100):
 
 
 # Training and testing data
-n_train = 1000
-n_test = 100
+n_train = 10000
+n_test = 1000
 theta_train = sample(theta_bar, radius, n=n_train)
 theta_test = sample(theta_bar, radius, n=n_test)
 
