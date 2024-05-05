@@ -59,10 +59,14 @@ def uniform_sphere_sample(center, radius, n=100):
     # Simplified sampler, replace with actual sampling logic
     return np.random.normal(loc=center, scale=radius, size=(n, len(center)))
 
-def sample(theta_bar, radius, n=100):
+def sample(theta_bar, radius, n_samples=100):
+    # Calculate lengths for slicing
+    length_W = n * n * layer
+    length_b = n * layer
+    
     # Sample points from multivariate ball
-    X_W = uniform_sphere_sample(theta_bar[:n*n*layer], radius, n=n).reshape(n, layer * n, n)
-    X_b = uniform_sphere_sample(theta_bar[n*n*layer:], radius, n=n).reshape(n, layer, n)
+    X_W = uniform_sphere_sample(theta_bar[:length_W], radius, n=n_samples).reshape(n_samples, n * layer, n)
+    X_b = uniform_sphere_sample(theta_bar[length_W:length_W + length_b], radius, n=n_samples).reshape(n_samples, n, layer)
 
     df = pd.DataFrame({
         'W': list(X_W),
@@ -71,11 +75,12 @@ def sample(theta_bar, radius, n=100):
     return df
 
 
+
 # Training and testing data
 n_train = 1000
 n_test = 100
-theta_train = sample(theta_bar, radius, n=n_train)
-theta_test = sample(theta_bar, radius, n=n_test)
+theta_train = sample(theta_bar, radius, n_samples=n_train)
+theta_test = sample(theta_bar, radius, n_samples=n_test)
 
 m.train(theta_train, learner=mlopt.XGBOOST)
 
