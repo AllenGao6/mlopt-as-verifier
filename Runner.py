@@ -17,11 +17,10 @@ z_out = cp.Variable(n, boolean=True)
 x_out = cp.Variable(1)
 constr = []
 
-# Flattened parameters for weights and biases
+# Parameters for weights and biases
 W = cp.Parameter((n * n * layer, n), name='W')
 b = cp.Parameter((n * layer, 1), name='b')
 
-# Define constraints using flattened parameters
 for l in range(layer):
     for j in range(n):
         W_slice = W[(l * n * n + j * n):(l * n * n + (j + 1) * n), :]  # Extract the weights for neuron j in layer l
@@ -45,7 +44,12 @@ objective = cp.Minimize(cp.norm(x_out, 1))
 prob = cp.Problem(objective, constr)
 m = mlopt.Optimizer(prob, log_level=logging.INFO)
 
-# Sampling function adjusted
+# Initialize theta_bar based on flattened parameters
+size_W = n * n * layer
+size_b = n * layer
+theta_bar = 2 * np.ones(size_W + size_b)  # Adjust dimensions for weights and biases
+radius = 1.0
+
 def uniform_sphere_sample(center, radius, n=100):
     return np.random.normal(loc=center, scale=radius, size=(n, len(center)))
 
