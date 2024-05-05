@@ -2,11 +2,7 @@ import numpy as np
 import cvxpy as cp
 import pandas as pd
 import logging
-
 import mlopt
-from mlopt.sampling import uniform_sphere_sample
-from mlopt.learners import XGBoost
-from mlopt.utils import n_features, pandas2array
 
 np.random.seed(1)  # Reset random seed for reproducibility
 
@@ -22,17 +18,17 @@ x_out = cp.Variable(1)
 constr = []
 
 # Flattened parameters for weights and biases
-W_flat = cp.Parameter(n * n * layer, name='W_flat')
-b_flat = cp.Parameter(n * layer, name='b_flat')
+W = cp.Parameter((n * n * layer, n), name='W')
+b = cp.Parameter((n * layer, 1), name='b')
 
+# Define constraints using flattened parameters
 for l in range(layer):
-    W = W_flat[n*n*l:n*n*(l+1)].reshape((n, n))
-    b = b_flat[n*l:n*(l+1)]
     for j in range(n):
-        ''' Encoding ReLu activation function '''
-        constr += [x[j, l + 1] >= W[:, j] @ x[:, l] + b[j],
+        W_slice = W[(l * n * n + j * n):(l * n * n + (j + 1) * n), :]  # Extract the weights for neuron j in layer l
+        b_slice = b[l * n + j]  # Bias for neuron j in layer l
+        constr += [x[j, l + 1] >= W_slice @ x[:, l] + b_slice,
                    x[j, l + 1] >= 0,
-                   x[j, l + 1] <= W[:, j] @ x[:, l] + b[j] + (1 - z_1[j, l]) * M,
+                   x[j, l + 1] <= W_slice @ x[:, l] + b_slice + (1 - z_1[j, l]) * M,
                    x[j, l + 1] <= (1 - z_2[j, l]) * M,
                    z_1[j, l] + z_2[j, l] == 1]
 
@@ -49,28 +45,22 @@ objective = cp.Minimize(cp.norm(x_out, 1))
 prob = cp.Problem(objective, constr)
 m = mlopt.Optimizer(prob, log_level=logging.INFO)
 
-
-
-# Average request
-theta_bar = 2 * np.ones(n * layer * n + n * layer)  # Adjust dimensions for weights and biases
-radius = 1.0
-
+# Sampling function adjusted
 def uniform_sphere_sample(center, radius, n=100):
-    # Simplified sampler, replace with actual sampling logic
     return np.random.normal(loc=center, scale=radius, size=(n, len(center)))
 
 def sample(theta_bar, radius, n=100):
     # Sample points from multivariate ball
-    X_W = uniform_sphere_sample(theta_bar[:n*n*layer], radius, n=n).reshape(n, n, layer, n)
-    X_b = uniform_sphere_sample(theta_bar[n*n*layer:], radius, n=n).reshape(n, layer, n)
+    size_W = n * n * layer
+    size_b = n * layer
+    X_W = uniform_sphere_sample(theta_bar[:size_W], radius, n=n)
+    X_b = uniform_sphere_sample(theta_bar[size_W:size_W + size_b], radius, n=n)
 
     df = pd.DataFrame({
         'W': list(X_W),
         'b': list(X_b)
     })
     return df
-
-
 
 # Training and testing data
 n_train = 1000
@@ -80,34 +70,10 @@ theta_test = sample(theta_bar, radius, n=n_test)
 
 m.train(theta_train, learner=mlopt.XGBOOST)
 
-
+# Performance and single point prediction
 results = m.performance(theta_test)
 print("Accuracy: %.2f " % results[0]['accuracy'])
 
-# # save training data
-# m.save_training_data("knapsack_training_data.pkl", delete_existing=True)
-
-# problem = cp.Problem(cp.Minimize(cost), constraints)
-# m = mlopt.Optimizer(problem)
-# m.load_training_data("knapsack_training_data.pkl")
-# m.train(learner=mlopt.PYTORCH)  # Train after loading samples
-
-# results = m.performance(theta_test)
-# print("Accuracy: %.2f " % results[0]['accuracy'])
-
-# Predict single point
 theta = theta_test.iloc[0]
 result_single_point = m.solve(theta)
 print(result_single_point)
-
-# y = m.y_train
-# X = m.X_train
-# learner = XGBoost(n_input=n_features(X),
-#                   n_classes=len(np.unique(y)),
-#                   n_best=3)
-# # Train learner
-# learner.train(pandas2array(X), y)
-
-# # Predict
-# X_pred = X.iloc[0]
-# y_pred = t .predict(pandas2array(X_pred))  # n_best most likely classes
