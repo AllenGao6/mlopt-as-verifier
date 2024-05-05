@@ -21,16 +21,18 @@ z_out = cp.Variable(n, boolean=True)
 x_out = cp.Variable(1)
 constr = []
 
-# Parameters for weights and biases
-W = cp.Parameter((n, n, layer), name='W')
-b = cp.Parameter((n, layer), name='b')
+# Flattened parameters for weights and biases
+W_flat = cp.Parameter(n * n * layer, name='W_flat')
+b_flat = cp.Parameter(n * layer, name='b_flat')
 
 for l in range(layer):
+    W = W_flat[n*n*l:n*n*(l+1)].reshape((n, n))
+    b = b_flat[n*l:n*(l+1)]
     for j in range(n):
         ''' Encoding ReLu activation function '''
-        constr += [x[j, l + 1] >= W[:, j, l] @ x[:, l] + b[j, l],
+        constr += [x[j, l + 1] >= W[:, j] @ x[:, l] + b[j],
                    x[j, l + 1] >= 0,
-                   x[j, l + 1] <= W[:, j, l] @ x[:, l] + b[j, l] + (1 - z_1[j, l]) * M,
+                   x[j, l + 1] <= W[:, j] @ x[:, l] + b[j] + (1 - z_1[j, l]) * M,
                    x[j, l + 1] <= (1 - z_2[j, l]) * M,
                    z_1[j, l] + z_2[j, l] == 1]
 
@@ -41,7 +43,6 @@ constr += [x[:, 0] <= np.zeros(n) + 1, x[:, 0] >= np.zeros(n) - 1]
 for j in range(n):
     constr += [x_out >= x[j, layer], x_out <= x[j, layer] + (1 - z_out[j]) * M]
 constr += [cp.sum(z_out) == 1]
-
 
 # Construct a CVXPY problem
 objective = cp.Minimize(cp.norm(x_out, 1))
