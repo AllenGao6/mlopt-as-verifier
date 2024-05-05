@@ -63,7 +63,7 @@ def sample(theta_bar, radius, n=100):
     # Sample points from multivariate ball
     X_W = [uniform_sphere_sample(theta_bar[l*n*n:(l+1)*n*n], radius, n=n).reshape(n, n, n) for l in range(layer)]
     X_b = [uniform_sphere_sample(theta_bar[n*n*layer+l*n:n*n*layer+(l+1)*n], radius, n=n).reshape(n, n) for l in range(layer)]
-    df = pd.DataFrame({f'W_{l}': list(X_W[l]) for l in range(layer)} | {f'b_{l}': list(X_b[l]) for l in range(layer)})
+    df = pd.DataFrame({f'W_{l}': [X_W[l][i] for i in range(n)] for l in range(layer)} | {f'b_{l}': [X_b[l][i] for i in range(n)] for l in range(layer)})
     return df
 
 # Training and testing data
