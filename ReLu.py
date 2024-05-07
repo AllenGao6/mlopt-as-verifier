@@ -38,7 +38,7 @@ def solve_NN(n, layer, input_range, invariance = 1):
     return end - start, float(x_out.value)
 
 # Define parameter ranges
-n_range = range(2, 40, 3)
+n_range = range(2, 45, 3)
 layer_range = range(2, 9, 2)
 input_range = range(1, 8, 2)
 
@@ -52,7 +52,6 @@ for n in n_range:
             print(f"Solving for n={n}, layer={layer}, input_range={input_val}")
             try:
                 time_elapsed, optimal_value = solve_NN(n, layer, input_val)
-                print(type(optimal_value))
             except Exception as e:
                 print(f"Failed for n={n}, layer={layer}, input_range={input_val}")
                 print(e)
