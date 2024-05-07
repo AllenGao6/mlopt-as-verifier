@@ -9,9 +9,9 @@ import cvxpy as cp
 import numpy as np
 
 # Generate a random problem
-np.random.seed(1)
-n = 10 # Number of neurons
-layer = 10 # Number layers
+np.random.seed(0)
+n = 5 # Number of neurons
+layer = 5 # Number layers
 M = 1e4
 
 x = cp.Variable((n, layer + 1))
@@ -43,20 +43,16 @@ for j in range(n):
 constr += [cp.sum(z_out) == 1]
 
 # Construct a CVXPY problem
-import time
 objective = cp.Minimize(cp.norm(x_out, 1))
 prob = cp.Problem(objective, constr)
+import time
 
-time1 = time.time()
+start = time.time()
 prob.solve()
-time2 = time.time()
+end = time.time()
+print("Time elapsed: ", end - start)
 
-print("Time spend: ", time2 - time1)
 print("Status: ", prob.status)
 print("The optimal value is", prob.value)
 print("A solution x is")
 print(x_out.value)
-# print(x.value)
-# print(z_1.value)
-# print(z_2.value)
-# print(z_out.value)
