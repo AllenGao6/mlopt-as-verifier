@@ -9,7 +9,7 @@ import cvxpy as cp
 import numpy as np
 
 # Generate a random problem
-np.random.seed(0)
+np.random.seed(1)
 n = 10 # Number of neurons
 layer = 10 # Number layers
 M = 1e4
