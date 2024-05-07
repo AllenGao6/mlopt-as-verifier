@@ -38,7 +38,7 @@ def solve_NN(n, layer, input_range, invariance = 1):
     return end - start, x_out.value
 
 # Define parameter ranges
-n_range = range(2, 50, 3)
+n_range = range(2, 40, 3)
 layer_range = range(2, 9, 2)
 input_range = range(1, 8, 2)
 
