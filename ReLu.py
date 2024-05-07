@@ -43,15 +43,20 @@ for j in range(n):
 constr += [cp.sum(z_out) == 1]
 
 # Construct a CVXPY problem
+import time
 objective = cp.Minimize(cp.norm(x_out, 1))
 prob = cp.Problem(objective, constr)
-prob.solve()
 
+time1 = time.time()
+prob.solve()
+time2 = time.time()
+
+print("Time spend: ", time2 - time1)
 print("Status: ", prob.status)
 print("The optimal value is", prob.value)
 print("A solution x is")
 print(x_out.value)
-print(x.value)
-print(z_1.value)
-print(z_2.value)
-print(z_out.value)
+# print(x.value)
+# print(z_1.value)
+# print(z_2.value)
+# print(z_out.value)
