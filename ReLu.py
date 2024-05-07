@@ -10,8 +10,8 @@ import numpy as np
 
 # Generate a random problem
 np.random.seed(0)
-n = 5 # Number of neurons
-layer = 5 # Number layers
+n = 1000 # Number of neurons
+layer = 1000 # Number layers
 M = 1e4
 
 x = cp.Variable((n, layer + 1))
