@@ -56,7 +56,8 @@ for n in n_range:
                 print(f"Failed for n={n}, layer={layer}, input_range={input_val}")
                 print(e)
                 time_elapsed, optimal_value = -1, -1
-            results[(n, layer, input_val)] = {'time_elapsed': time_elapsed, 'optimal_value': optimal_value}
+            key = str(n) + '_' + str(layer) + '_' + str(input_val)
+            results[key] = {'time_elapsed': time_elapsed, 'optimal_value': optimal_value}
 
 # Save results to a file or process as needed
 # For example, to save to a JSON file:
