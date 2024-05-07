@@ -10,7 +10,7 @@ import numpy as np
 
 # Generate a random problem
 np.random.seed(0)
-n = 10 # Number of neurons
+n = 20 # Number of neurons
 layer = 5 # Number layers
 M = 1e4
 
