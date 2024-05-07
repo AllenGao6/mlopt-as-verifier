@@ -35,7 +35,7 @@ def solve_NN(n, layer, input_range, invariance = 1):
     start = time.time()
     prob.solve(verbose=False)
     end = time.time()
-    return end - start, x_out.value
+    return end - start, float(x_out.value)
 
 # Define parameter ranges
 n_range = range(2, 40, 3)
