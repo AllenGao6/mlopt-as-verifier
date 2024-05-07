@@ -38,9 +38,9 @@ def solve_NN(n, layer, input_range, invariance = 1):
     return end - start, x_out.value
 
 # Define parameter ranges
-n_range = range(2, 101)
-layer_range = range(2, 11)
-input_range = range(1, 11)
+n_range = range(2, 90, 3)
+layer_range = range(2, 15, 2)
+input_range = range(1, 8, 2)
 
 # Initialize dictionary to store results
 results = {}
@@ -50,7 +50,12 @@ for n in n_range:
     for layer in layer_range:
         for input_val in input_range:
             print(f"Solving for n={n}, layer={layer}, input_range={input_val}")
-            time_elapsed, optimal_value = solve_NN(n, layer, input_val)
+            try:
+                time_elapsed, optimal_value = solve_NN(n, layer, input_val)
+            except Exception as e:
+                print(f"Failed for n={n}, layer={layer}, input_range={input_val}")
+                print(e)
+                time_elapsed, optimal_value = -1, -1
             results[(n, layer, input_val)] = {'time_elapsed': time_elapsed, 'optimal_value': optimal_value}
 
 # Save results to a file or process as needed
