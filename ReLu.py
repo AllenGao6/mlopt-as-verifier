@@ -11,7 +11,7 @@ import numpy as np
 # Generate a random problem
 np.random.seed(0)
 n = 5 # Number of neurons
-layer = 100 # Number layers
+layer = 10 # Number layers
 M = 1e4
 
 x = cp.Variable((n, layer + 1))
