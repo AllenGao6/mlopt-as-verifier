@@ -27,7 +27,6 @@ b = cp.Parameter((n, layer), name='b')
 
 for l in range(layer):
     for j in range(n):
-        ''' Encoding ReLu activation function '''
         # Update matrix multiplication to align with the reshaped W
         W_l = W[l*n:(l+1)*n, :]  # Extract weights for layer l
         constr += [x[j, l + 1] >= W_l[:, j] @ x[:, l] + b[j, l],
@@ -82,7 +81,7 @@ n_test = 100
 theta_train = sample(theta_bar, radius, n_samples=n_train)
 theta_test = sample(theta_bar, radius, n_samples=n_test)
 
-m.train(theta_train, learner=mlopt.XGBOOST)
+m.train(theta_train, learner=mlopt.OPTIMAL_TREE)
 
 
 results = m.performance(theta_test)
