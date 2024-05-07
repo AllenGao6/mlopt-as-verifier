@@ -48,7 +48,7 @@ prob = cp.Problem(objective, constr)
 import time
 
 start = time.time()
-prob.solve()
+prob.solve(verbose=True)
 end = time.time()
 print("Time elapsed: ", end - start)
 
