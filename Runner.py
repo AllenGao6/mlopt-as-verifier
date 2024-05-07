@@ -10,8 +10,8 @@ from mlopt.utils import n_features, pandas2array
 
 np.random.seed(1)  # Reset random seed for reproducibility
 
-n = 100  # Number of neurons
-layer = 100  # Number of layers
+n = 1000  # Number of neurons
+layer = 1000  # Number of layers
 M = 1e4
 
 x = cp.Variable((n, layer + 1))
@@ -36,7 +36,8 @@ for l in range(layer):
                    z_1[j, l] + z_2[j, l] == 1]
 
 ''' Specify input range '''
-constr += [x[:, 0] <= np.zeros(n) + 1, x[:, 0] >= np.zeros(n) - 1]
+input_range = 2
+constr += [x[:, 0] <= np.zeros(n) + input_range, x[:, 0] >= np.zeros(n) - input_range]
 
 ''' Specify output layer maximum'''
 for j in range(n):
@@ -52,7 +53,7 @@ m = mlopt.Optimizer(prob, log_level=logging.INFO)
 
 # Average request
 theta_bar = 2 * np.ones(n * n * layer + n * layer)
-radius = 1.0
+radius = 5.0
 
 def uniform_sphere_sample(center, radius, n=100):
     # Simplified sampler, replace with actual sampling logic
