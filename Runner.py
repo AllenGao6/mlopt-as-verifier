@@ -10,7 +10,7 @@ from mlopt.utils import n_features, pandas2array
 
 np.random.seed(1)  # Reset random seed for reproducibility
 
-n = 10000  # Number of neurons
+n = 100  # Number of neurons
 layer = 10000  # Number of layers
 M = 1e5
 
