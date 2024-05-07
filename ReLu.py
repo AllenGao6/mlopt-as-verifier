@@ -52,6 +52,7 @@ for n in n_range:
             print(f"Solving for n={n}, layer={layer}, input_range={input_val}")
             try:
                 time_elapsed, optimal_value = solve_NN(n, layer, input_val)
+                print(type(optimal_value))
             except Exception as e:
                 print(f"Failed for n={n}, layer={layer}, input_range={input_val}")
                 print(e)
