@@ -40,8 +40,8 @@ def solve_NN(n, layer, input_range=1, invariance=1):
     end = time.time()
     time_elapsed = end - start
 
-    num_vars = prob.size_metrics.num_vars
-    num_constr = prob.size_metrics.num_constr
+    num_vars = sum(v.size for v in prob.variables())
+    num_constr = len(prob.constraints)
 
     print(f"Time elapsed: {time_elapsed}, Number of variables: {num_vars}, Number of constraints: {num_constr}")
 
