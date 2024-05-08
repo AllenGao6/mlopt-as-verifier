@@ -82,10 +82,11 @@ n_test = 100
 theta_train = sample(theta_bar, radius, n_samples=n_train)
 theta_test = sample(theta_bar, radius, n_samples=n_test)
 
-m.train(theta_train, learner=mlopt.XGBOOST)
+m.train(theta_train, learner=mlopt.PYTORCH)
 
 
 results = m.performance(theta_test)
+print(len(results))
 print("Accuracy: %.2f " % results[0]['accuracy'])
 
 # Predict single point

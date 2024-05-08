@@ -135,3 +135,4 @@ auto-save-list
 tramp
 .\#*
 checkpoints/
+env/
