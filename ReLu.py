@@ -1,8 +1,9 @@
 import cvxpy as cp
 import numpy as np
 import time
+import json
 
-def solve_NN(n, layer, input_range=1, invariance = 1):
+def solve_NN(n, layer, input_range=1, invariance=1):
     M = 1e4
     x = cp.Variable((n, layer + 1))
     z_1 = cp.Variable((n, layer), boolean=True)
@@ -16,13 +17,14 @@ def solve_NN(n, layer, input_range=1, invariance = 1):
         W = np.random.uniform(low=-invariance, high=invariance, size=(n, n))
         b = np.random.uniform(low=-invariance, high=invariance, size=(n))
 
-
         for j in range(n):
-            constr += [x[j, l + 1] >= W[j, :] @ x[:, l] + b[j],
-                       x[j, l + 1] >= 0,
-                       x[j, l + 1] <= W[j, :] @ x[:, l] + b[j] + (1 - z_1[j, l]) * M,
-                       x[j, l + 1] <= (1 - z_2[j, l]) * M,
-                       z_1[j, l] + z_2[j, l] == 1]
+            constr += [
+                x[j, l + 1] >= W[j, :] @ x[:, l] + b[j],
+                x[j, l + 1] >= 0,
+                x[j, l + 1] <= W[j, :] @ x[:, l] + b[j] + (1 - z_1[j, l]) * M,
+                x[j, l + 1] <= (1 - z_2[j, l]) * M,
+                z_1[j, l] + z_2[j, l] == 1
+            ]
 
     constr += [x[:, 0] <= np.zeros(n) + input_range, x[:, 0] >= np.zeros(n) - input_range]
 
@@ -34,11 +36,13 @@ def solve_NN(n, layer, input_range=1, invariance = 1):
     prob = cp.Problem(objective, constr)
 
     start = time.time()
-    prob.solve(verbose=False)
+    prob.solve(verbose=False, solver=cp.GUROBI)
     end = time.time()
+    time_elapsed = end - start
+
     if not x_out or not x_out.value:
-        return end - start, -1
-    return end - start, float(x_out.value)
+        return time_elapsed, -1, -1
+    return time_elapsed, float(x_out.value), prob.value
 
 # Define parameter ranges
 n_range = range(2, 28, 2)
@@ -54,16 +58,18 @@ for n in n_range:
         for input_val in input_range:
             print(f"Solving for n={n}, layer={layer}, input_range={input_val}")
             try:
-                time_elapsed, optimal_value = solve_NN(n, layer)
+                time_elapsed, optimal_value, cost = solve_NN(n, layer, input_val)
             except Exception as e:
                 print(f"Failed for n={n}, layer={layer}, input_range={input_val}")
                 print(e)
-                time_elapsed, optimal_value = -1, -1
+                time_elapsed, optimal_value, cost = -1, -1, -1
             key = str(n) + '_' + str(layer) + '_' + str(input_val)
-            results[key] = {'time_elapsed': time_elapsed, 'optimal_value': optimal_value}
+            results[key] = {
+                'time_elapsed': time_elapsed,
+                'optimal_value': optimal_value,
+                'cost': cost
+            }
 
-# Save results to a file or process as needed
-# For example, to save to a JSON file:
-import json
+# Save results to a JSON file
 with open('results.json', 'w') as f:
-    json.dump(results, f)
+    json.dump(results, f, indent=4)
