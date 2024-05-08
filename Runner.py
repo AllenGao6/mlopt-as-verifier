@@ -90,10 +90,10 @@ print(len(results))
 print("Accuracy: %.2f " % results[0]['accuracy'])
 
 # Predict single point
-for i in range(5):
-    theta = theta_test.iloc[i]
-    result_single_point = m.solve(theta)
-    print(result_single_point)
+# for i in range(5):
+#     theta = theta_test.iloc[i]
+#     result_single_point = m.solve(theta)
+#     print(result_single_point)
 
 '''
 format of result_single_point:
@@ -105,17 +105,20 @@ time = 0
 infeasibility = 0
 pred_time = 0
 solve_time = 0
-for i in range(5):
+ran = 5
+for i in range(ran):
+    theta = theta_test.iloc[i]
+    result_single_point = m.solve(theta)
     cost += result_single_point['cost']
     time += result_single_point['time']
     infeasibility += result_single_point['infeasibility']
     pred_time += result_single_point['pred_time']
     solve_time += result_single_point['solve_time']
-cost /= 5
-time /= 5
-infeasibility /= 5
-pred_time /= 5
-solve_time /= 5
+cost /= ran
+time /= ran
+infeasibility /= ran
+pred_time /= ran
+solve_time /= ran
 print("Average cost: %.2f " % cost)
 print("Average time: %.2f " % time)
 print("Average infeasibility: %.2f " % infeasibility)
