@@ -109,6 +109,7 @@ ran = 5
 for i in range(ran):
     theta = theta_test.iloc[i]
     result_single_point = m.solve(theta)
+    print(result_single_point)
     cost += result_single_point['cost']
     time += result_single_point['time']
     infeasibility += result_single_point['infeasibility']
