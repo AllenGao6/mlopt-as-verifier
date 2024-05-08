@@ -52,12 +52,15 @@ m = mlopt.Optimizer(prob, log_level=logging.INFO)
 
 
 # Average request
-theta_bar = 2 * np.ones(n * n * layer + n * layer)
+theta_bar = np.ones(n * n * layer + n * layer) - 1
 radius = 1.0
 
 def uniform_sphere_sample(center, radius, n=100):
     # Simplified sampler, replace with actual sampling logic
-    return np.random.normal(loc=center, scale=radius, size=(n, len(center)))
+    a = np.random.normal(loc=center, scale=radius, size=(n, len(center)))
+
+    print(a)
+    return a
 
 def sample(theta_bar, radius, n_samples=100):
     # Calculate lengths for slicing
