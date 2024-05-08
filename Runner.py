@@ -11,7 +11,7 @@ from mlopt.utils import n_features, pandas2array
 np.random.seed(1)  # Reset random seed for reproducibility
 
 n = 2 # Number of neurons
-layer = 2  # Number of layers
+layer = 4  # Number of layers
 M = 1e4
 
 x = cp.Variable((n, layer + 1))
@@ -82,7 +82,7 @@ n_test = 100
 theta_train = sample(theta_bar, radius, n_samples=n_train)
 theta_test = sample(theta_bar, radius, n_samples=n_test)
 
-m.train(theta_train, learner=mlopt.XGBOOST)
+m.train(theta_train, learner=mlopt.PYTORCH)
 
 
 results = m.performance(theta_test)
