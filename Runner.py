@@ -10,9 +10,9 @@ from mlopt.utils import n_features, pandas2array
 
 np.random.seed(1)  # Reset random seed for reproducibility
 
-n = 20  # Number of neurons
-layer = 8  # Number of layers
-M = 1e5
+n = 5  # Number of neurons
+layer = 5  # Number of layers
+M = 1e4
 
 x = cp.Variable((n, layer + 1))
 z_1 = cp.Variable((n, layer), boolean=True)
@@ -27,6 +27,7 @@ b = cp.Parameter((n, layer), name='b')
 
 for l in range(layer):
     for j in range(n):
+        ''' Encoding ReLu activation function '''
         # Update matrix multiplication to align with the reshaped W
         W_l = W[l*n:(l+1)*n, :]  # Extract weights for layer l
         constr += [x[j, l + 1] >= W_l[:, j] @ x[:, l] + b[j, l],
@@ -36,8 +37,7 @@ for l in range(layer):
                    z_1[j, l] + z_2[j, l] == 1]
 
 ''' Specify input range '''
-input_range = 2
-constr += [x[:, 0] <= np.zeros(n) + input_range, x[:, 0] >= np.zeros(n) - input_range]
+constr += [x[:, 0] <= np.zeros(n) + 1, x[:, 0] >= np.zeros(n) - 1]
 
 ''' Specify output layer maximum'''
 for j in range(n):
@@ -53,7 +53,7 @@ m = mlopt.Optimizer(prob, log_level=logging.INFO)
 
 # Average request
 theta_bar = 2 * np.ones(n * n * layer + n * layer)
-radius = 5.0
+radius = 1.0
 
 def uniform_sphere_sample(center, radius, n=100):
     # Simplified sampler, replace with actual sampling logic
@@ -82,7 +82,7 @@ n_test = 100
 theta_train = sample(theta_bar, radius, n_samples=n_train)
 theta_test = sample(theta_bar, radius, n_samples=n_test)
 
-m.train(theta_train, learner=mlopt.OPTIMAL_TREE)
+m.train(theta_train, learner=mlopt.XGBOOST)
 
 
 results = m.performance(theta_test)
