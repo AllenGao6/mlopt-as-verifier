@@ -82,7 +82,7 @@ n_test = 100
 theta_train = sample(theta_bar, radius, n_samples=n_train)
 theta_test = sample(theta_bar, radius, n_samples=n_test)
 
-m.train(theta_train, learner=mlopt.PYTORCH)
+m.train(theta_train, learner=mlopt.XGBOOST)
 
 
 results = m.performance(theta_test)
