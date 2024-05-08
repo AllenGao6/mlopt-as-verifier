@@ -57,10 +57,7 @@ radius = 1.0
 
 def uniform_sphere_sample(center, radius, n=100):
     # Simplified sampler, replace with actual sampling logic
-    a = np.random.normal(loc=center, scale=radius, size=(n, len(center)))
-
-    print(a)
-    return a
+    return np.random.normal(loc=center, scale=radius, size=(n, len(center)))
 
 def sample(theta_bar, radius, n_samples=100):
     # Calculate lengths for slicing
