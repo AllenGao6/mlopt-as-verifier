@@ -2,7 +2,7 @@ import cvxpy as cp
 import numpy as np
 import time
 
-def solve_NN(n, layer, input_range, invariance = 1):
+def solve_NN(n, layer, input_range=1, invariance = 1):
 
     M = 1e4
     x = cp.Variable((n, layer + 1))
@@ -51,14 +51,14 @@ def solve_NN(n, layer, input_range, invariance = 1):
 
 n_range = range(2, 45, 3)
 layer_range = range(2, 9, 2)
-input_range = range(1, 8, 2)
+input_range = range(1, 5)
 
 for n in n_range:
     for layer in layer_range:
         for input_val in input_range:
-            print(f"Solving for n={n}, layer={layer}, input_range={input_val}")
+            print(f"Solving for n={n}, layer={layer}, count={input_val}")
             try:
-                time_elapsed, optimal_value = solve_NN(n, layer, input_val)
+                time_elapsed, optimal_value = solve_NN(n, layer)
                 print(f"Time elapsed: {time_elapsed:.2f}s, Optimal value: {optimal_value}")
             except Exception as e:
                 print(f"Failed for n={n}, layer={layer}, input_range={input_val}")
