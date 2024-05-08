@@ -37,7 +37,7 @@ class TestKKT(unittest.TestCase):
         x = cp.Variable(self.n)
         prob = cp.Problem(cp.Minimize(cp.quad_form(x, self.P) + self.q.T @ x),
                           [self.A @ x == self.b])
-        obj_solver = prob.solve(solver=stg.DEFAULT_SOLVER)
+        obj_solver = prob.solve(solver=stg.DEFAULT_SOLVER, reoptimize=True)
         x_solver = np.copy(x.value)
         y_solver = np.copy(prob.constraints[0].dual_value)
 
