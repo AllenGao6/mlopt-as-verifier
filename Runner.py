@@ -10,8 +10,8 @@ from mlopt.utils import n_features, pandas2array
 
 np.random.seed(1)  # Reset random seed for reproducibility
 
-n = 5  # Number of neurons
-layer = 5  # Number of layers
+n = 20  # Number of neurons
+layer = 8  # Number of layers
 M = 1e4
 
 x = cp.Variable((n, layer + 1))
