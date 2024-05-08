@@ -13,8 +13,9 @@ def solve_NN(n, layer, input_range, invariance = 1):
     constr = []
 
     for l in range(layer):
-        W = np.random.rand(n, n) * invariance
-        b = np.random.randn(n) * invariance
+        W = np.random.uniform(low=-invariance, high=invariance, size=(n, n))
+        b = np.random.uniform(low=-invariance, high=invariance, size=(n))
+
 
         for j in range(n):
             constr += [x[j, l + 1] >= W[j, :] @ x[:, l] + b[j],
