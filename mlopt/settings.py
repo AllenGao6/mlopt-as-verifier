@@ -47,8 +47,8 @@ XGBOOST = "xgboost"
 DEFAULT_LEARNER = XGBOOST
 
 # Learners settings
-N_BEST = 3
-N_TRAIN_TRIALS = 20
+N_BEST = 1
+N_TRAIN_TRIALS = 1
 FRAC_TRAIN = 0.8  # Fraction dividing training and validation
 
 # Sampling
