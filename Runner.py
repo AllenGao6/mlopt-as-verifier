@@ -10,8 +10,8 @@ from mlopt.utils import n_features, pandas2array
 
 np.random.seed(1)  # Reset random seed for reproducibility
 
-n = 3 # Number of neurons
-layer = 3  # Number of layers
+n = 2 # Number of neurons
+layer = 2  # Number of layers
 M = 1e4
 
 x = cp.Variable((n, layer + 1))
@@ -90,6 +90,35 @@ print(len(results))
 print("Accuracy: %.2f " % results[0]['accuracy'])
 
 # Predict single point
-theta = theta_test.iloc[0]
-result_single_point = m.solve(theta)
-print(result_single_point)
+for i in range(5):
+    theta = theta_test.iloc[i]
+    result_single_point = m.solve(theta)
+    print(result_single_point)
+
+'''
+format of result_single_point:
+'time': 0.0016522407531738281, 'strategy': <mlopt.strategy.Strategy object at 0x7fda8e7e3a90>, 'cost': 0.08093849178430029, 'infeasibility': 8.022732615307884e-05, 'pred_time': 0.001313924789428711, 'solve_time': 0.0003383159637451172}
+'''
+# get the average of the cost, time, infeasibility, pred_time, solve_time
+cost = 0
+time = 0
+infeasibility = 0
+pred_time = 0
+solve_time = 0
+for i in range(5):
+    cost += result_single_point['cost']
+    time += result_single_point['time']
+    infeasibility += result_single_point['infeasibility']
+    pred_time += result_single_point['pred_time']
+    solve_time += result_single_point['solve_time']
+cost /= 5
+time /= 5
+infeasibility /= 5
+pred_time /= 5
+solve_time /= 5
+print("Average cost: %.2f " % cost)
+print("Average time: %.2f " % time)
+print("Average infeasibility: %.2f " % infeasibility)
+print("Average pred_time: %.2f " % pred_time)
+print("Average solve_time: %.2f " % solve_time)
+
