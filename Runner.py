@@ -27,8 +27,6 @@ cost = 0
 constr = []
 
 # Fill W and b with random values (as example, replace with real data in practice)
-W.value = np.random.rand(n * layer, n) * invariance
-b.value = np.random.randn(n, layer) * invariance
 
 for l in range(layer):
     for j in range(n):
